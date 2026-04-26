@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Adrenalyn 25-26">
+<meta name="theme-color" content="#1A3A6B">
+<title>Adrenalyn XL 2025-26</title>
+<style>
+  :root { --naranja:#FF6B1A; --azul:#1A3A6B; --azul-dark:#0F2247; --verde:#22C55E; --bis-bg:#FFFBEB; --checked-bg:#F0FFF4; --row-h:48px; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Trebuchet MS',system-ui,sans-serif;background:#F0F4F8;min-height:100vh;max-width:520px;margin:0 auto;overscroll-behavior:none;}
+  #header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,var(--azul) 0%,var(--azul-dark) 100%);padding:12px 14px 10px;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+  .header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .logo{font-size:18px;font-weight:900;letter-spacing:2px;color:var(--naranja);}
+  .temporada{font-size:12px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:1px;}
+  .progress-wrap{height:7px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;margin-bottom:5px;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--naranja),#FFD700);border-radius:4px;transition:width .4s ease;}
+  .progress-text{font-size:11px;color:rgba(255,255,255,.75);text-align:right;}
+  #toolbar{background:white;border-bottom:1px solid #E2E8F0;padding:8px 12px;display:flex;gap:8px;align-items:center;position:sticky;top:88px;z-index:99;}
+  .search-wrap{flex:1;position:relative;}
+  #searchInput{width:100%;border:1.5px solid #CBD5E0;border-radius:8px;padding:8px 32px 8px 10px;font-size:14px;background:#F7FAFC;outline:none;color:#2D3748;}
+  #searchInput:focus{border-color:var(--azul);}
+  #clearSearch{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:14px;color:#A0AEC0;cursor:pointer;display:none;}
+  #filtroBtn{display:flex;align-items:center;gap:5px;background:#EDF2F7;border:1.5px solid #CBD5E0;border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;color:var(--azul);cursor:pointer;white-space:nowrap;transition:all .2s;-webkit-user-select:none;user-select:none;}
+  #filtroBtn.active{background:var(--naranja);border-color:var(--naranja);color:white;}
+  .filtro-dot{width:8px;height:8px;border-radius:50%;background:#CBD5E0;transition:background .2s;}
+  #filtroBtn.active .filtro-dot{background:white;}
+  #tabs{display:flex;overflow-x:auto;gap:0;background:white;border-bottom:2px solid #E2E8F0;padding:0 8px;position:sticky;top:140px;z-index:98;scrollbar-width:none;}
+  #tabs::-webkit-scrollbar{display:none;}
+  .tab{background:none;border:none;border-bottom:3px solid transparent;padding:9px 9px;cursor:pointer;font-size:11px;font-weight:600;color:#718096;white-space:nowrap;transition:all .15s;-webkit-user-select:none;user-select:none;}
+  .tab.active{border-bottom-color:var(--naranja);color:var(--azul);}
+  #content{padding-bottom:90px;}
+  .subnav{display:flex;overflow-x:auto;gap:6px;padding:10px 12px;background:#EDF2F7;border-bottom:1px solid #E2E8F0;scrollbar-width:none;}
+  .subnav::-webkit-scrollbar{display:none;}
+  .subnav-btn{background:white;border:1.5px solid #CBD5E0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:10px;font-weight:600;color:#4A5568;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:68px;transition:all .15s;-webkit-user-select:none;user-select:none;}
+  .subnav-btn.active{background:var(--azul);border-color:var(--azul);color:white;}
+  .subnav-btn .btn-count{font-size:11px;font-weight:800;}
+  .subnav-btn.completo .btn-count{color:var(--verde);}
+  .subnav-btn.active.completo .btn-count{color:#86EFAC;}
+  .section-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 8px;background:white;border-bottom:1px solid #E2E8F0;position:sticky;top:183px;z-index:97;}
+  .section-title{font-size:14px;font-weight:800;color:var(--azul);}
+  .section-count{font-size:13px;font-weight:700;color:var(--naranja);}
+  .card-row{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:var(--row-h);background:white;border-bottom:1px solid #EDF2F7;cursor:pointer;transition:background .12s;gap:10px;-webkit-user-select:none;user-select:none;}
+  .card-row:active{background:#EDF2F7;}
+  .card-row.checked{background:var(--checked-bg);}
+  .card-row.bis{background:var(--bis-bg);border-left:3px solid var(--naranja);}
+  .card-row.bis.checked{background:#F0FFF4;}
+  .card-row.hidden{display:none;}
+  .card-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+  .card-num{font-size:10px;font-weight:700;color:#A0AEC0;min-width:42px;background:#EDF2F7;border-radius:4px;padding:2px 4px;text-align:center;flex-shrink:0;}
+  .card-name{font-size:13px;font-weight:500;color:#2D3748;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .card-row.checked .card-name{color:#68D391;text-decoration:line-through;}
+  .bis-tag{font-size:9px;background:#FED7AA;color:#C05621;border-radius:3px;padding:1px 4px;flex-shrink:0;white-space:nowrap;}
+  .checkbox{width:26px;height:26px;border-radius:6px;border:2px solid #CBD5E0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+  .card-row.checked .checkbox{background:var(--verde);border-color:var(--verde);}
+  .checkmark{color:white;font-size:14px;font-weight:900;display:none;}
+  .card-row.checked .checkmark{display:block;}
+  .info-box{margin:8px 12px;padding:10px 14px;background:#EBF8FF;border:1px solid #BEE3F8;border-radius:8px;font-size:12px;color:#2B6CB0;line-height:1.5;}
+  .info-box.warn{background:#FFFFF0;border-color:#F6E05E;color:#744210;}
+  .group-label{padding:8px 16px 4px;font-size:10px;font-weight:800;color:#A0AEC0;text-transform:uppercase;letter-spacing:1px;background:#F7FAFC;border-bottom:1px solid #EDF2F7;}
+  .empty-state{padding:40px 20px;text-align:center;color:#A0AEC0;font-size:14px;line-height:1.6;}
+  .empty-icon{font-size:40px;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="header-top"><span class="logo">ADRENALYN XL</span><span class="temporada">LaLiga 2025–26</span></div>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">0 / 0 cartas · 0% completado</div>
+</div>
+<div id="toolbar">
+  <div class="search-wrap">
+    <input id="searchInput" type="search" placeholder="🔍  Buscar jugador o número...">
+    <button id="clearSearch">✕</button>
+  </div>
+  <button id="filtroBtn" onclick="toggleFiltro()"><div class="filtro-dot"></div>Faltan</button>
+</div>
+<div id="tabs">
+  <button class="tab active" onclick="setSeccion('equipos')">⚽ Equipos</button>
+  <button class="tab" onclick="setSeccion('series')">⭐ Series</button>
+  <button class="tab" onclick="setSeccion('entrenadores')">🧢 Entrenadores</button>
+  <button class="tab" onclick="setSeccion('plus')">🔵 Plus</button>
+  <button class="tab" onclick="setSeccion('fuera')">🌟 Fuera col.</button>
+</div>
+<div id="content"></div>
+
+<script>
+// ─── LEYENDA DE ORIGEN BIS ───────────────────────────────
+// STD = Stadium Card (básica, en sobres)
+// BOX = Tin Box Serie Oro (exclusiva)
+// PKT = Pocket Box Platinum (exclusiva)
+// ACT = Actualización Plus (marzo 2026)
+// SPO = Sobre Premium Oro (exclusiva)
+
+const EQUIPOS = [
+  { nombre:"D. Alavés", cartas:[
+    {n:"1",t:"Escudo"},{n:"1 Bis",t:"Stadium Card - Mendizorroza",bis:"STD"},
+    {n:"2",t:"Sivera — Capitán"},{n:"3",t:"Raúl Fernández"},{n:"4",t:"Johny"},
+    {n:"5",t:"Yenaglia"},{n:"6",t:"Pacheco"},{n:"7",t:"Parada"},
+    {n:"7 Bis",t:"Garcés",bis:"ACT"},{n:"8",t:"Moussa Diarra"},{n:"9",t:"Blanco"},
+    {n:"10",t:"Guevara"},{n:"11",t:"Gutidi"},{n:"12",t:"Aleñá"},
+    {n:"13",t:"Pablo Ibáñez"},{n:"14",t:"Denis Suárez"},{n:"15",t:"Carlos Vicente"},
+    {n:"15 Bis",t:"Ángel Pérez",bis:"ACT"},{n:"16",t:"Toni Martínez"},
+    {n:"16 Bis",t:"Calebe",bis:"BOX"},{n:"17",t:"Boyé"},
+    {n:"18",t:"Mariano"},{n:"18 Bis",t:"Abde",bis:"PKT"},
+    {n:"8 Bis",t:"Yusi",bis:"SMO"}
+  ]},
+  { nombre:"Athletic Club", cartas:[
+    {n:"19",t:"Escudo"},{n:"19 Bis",t:"Stadium Card - San Mamés",bis:"STD"},
+    {n:"20",t:"Unai Simón"},{n:"21",t:"Padilla"},{n:"22",t:"Areso"},
+    {n:"22 Bis",t:"Gorosabel",bis:"ACT"},{n:"23",t:"Vivian"},{n:"24",t:"Paredes"},
+    {n:"25",t:"Laporte"},{n:"26",t:"Yuri"},{n:"27",t:"Ruiz de Galarreta"},
+    {n:"28",t:"Jauregizar"},{n:"29",t:"Vesga"},{n:"29 Bis",t:"Selton",bis:"SMO"},{n:"30",t:"Unai Gómez"},
+    {n:"30 Bis",t:"Rego",bis:"PKT"},{n:"31",t:"Sancet"},{n:"32",t:"Berenguer"},
+    {n:"32 Bis",t:"Robert Navarro",bis:"SPO"},{n:"33",t:"Williams — Capitán"},
+    {n:"34",t:"Maroan"},{n:"35",t:"Guruzeta"},{n:"36",t:"Nico Williams"}
+  ]},
+  { nombre:"Atlético de Madrid", cartas:[
+    {n:"37",t:"Escudo"},{n:"37 Bis",t:"Stadium Card - Riyadh Air Metropolitano",bis:"STD"},
+    {n:"38",t:"Oblak"},{n:"39",t:"Musso"},{n:"40",t:"Marcos Llorente"},
+    {n:"40 Bis",t:"Nahuel Molina",bis:"SMO"},
+    {n:"41",t:"Le Normand"},{n:"41 Bis",t:"Pubill",bis:"ACT"},
+    {n:"42",t:"Lenglet"},{n:"42 Bis",t:"Giménez",bis:"SPO"},
+    {n:"43",t:"Hancko"},{n:"44",t:"Ruggeri"},{n:"44 Bis",t:"Galán",bis:"PKT"},
+    {n:"45",t:"Koke — Capitán"},{n:"46",t:"Barrios"},
+    {n:"46 Bis",t:"Obed Vargas",bis:"ACT"},{n:"47",t:"Gallagher"},
+    {n:"47 Bis",t:"Johny Cardoso",bis:"BOX"},{n:"48",t:"Álex Baena"},
+    {n:"48 Bis",t:"Rodri Mendoza",bis:"ACT"},{n:"49",t:"Almada"},
+    {n:"50",t:"Nico González"},{n:"51",t:"Giuliano"},
+    {n:"51 Bis",t:"Raspadori",bis:"PKT"},{n:"52",t:"Julián Álvarez"},
+    {n:"53",t:"Sørloth"},{n:"54",t:"Griezmann"},
+    {n:"54 Bis",t:"Lookman",bis:"ACT"}
+  ]},
+  { nombre:"FC Barcelona", cartas:[
+    {n:"55",t:"Escudo"},{n:"55 Bis",t:"Stadium Card - Spotify Camp Nou",bis:"STD"},
+    {n:"56",t:"Joan García"},{n:"57",t:"Szczęsny"},{n:"58",t:"Koundé"},
+    {n:"58 Bis",t:"Joao Cancelo",bis:"ACT"},{n:"59",t:"Cubarsí"},
+    {n:"60",t:"Eric García"},{n:"60 Bis",t:"Gerard Martín",bis:"BOX"},
+    {n:"61",t:"Araújo — Capitán"},{n:"62",t:"Balde"},{n:"63",t:"De Jong"},
+    {n:"63 Bis",t:"Marc Bernal",bis:"SMO"},
+    {n:"64",t:"Gavi"},{n:"64 Bis",t:"Casadó",bis:"PKT"},
+    {n:"65",t:"Pedri"},{n:"66",t:"Fermín"},{n:"67",t:"Dani Olmo"},
+    {n:"68",t:"Raphinha"},{n:"69",t:"Lamine Yamal"},{n:"70",t:"Ferran Torres"},
+    {n:"70 Bis",t:"Bardghji",bis:"PKT"},{n:"71",t:"Lewandowski"},{n:"72",t:"Rashford"}
+  ]},
+  { nombre:"Real Betis", cartas:[
+    {n:"73",t:"Escudo"},{n:"73 Bis",t:"Stadium Card - La Cartuja",bis:"STD"},
+    {n:"74",t:"Pau López"},{n:"75",t:"Valles"},{n:"76",t:"Bellerín"},
+    {n:"76 Bis",t:"Aitor Ruibal",bis:"ACT"},{n:"77",t:"Bartra"},
+    {n:"78",t:"Diego Llorente"},{n:"79",t:"Natan"},{n:"80",t:"Valentín Gómez"},
+    {n:"81",t:"Junior"},{n:"82",t:"Altimira"},{n:"82 Bis",t:"Deossa",bis:"BOX"},
+    {n:"83",t:"Amrabat"},{n:"84",t:"Pablo Fornals"},
+    {n:"84 Bis",t:"Fidalgo",bis:"ACT"},{n:"85",t:"Lo Celso"},
+    {n:"85 Bis",t:"Marc Roca",bis:"SPO"},{n:"86",t:"Isco — Capitán"},
+    {n:"87",t:"Antony"},{n:"88",t:"Cucho Hernández"},{n:"89",t:"Riquelme"},
+    {n:"89 Bis",t:"Pablo García",bis:"PKT"},{n:"90",t:"Abde"},
+    {n:"90 Bis",t:"Chimy Ávila",bis:"SMO"}
+  ]},
+  { nombre:"RC Celta", cartas:[
+    {n:"91",t:"Escudo"},{n:"91 Bis",t:"Stadium Card - Abanca Balaídos",bis:"STD"},
+    {n:"92",t:"Radu"},{n:"93",t:"Iván Villar"},{n:"94",t:"Javi Rueda"},
+    {n:"94 Bis",t:"Álvaro Núñez",bis:"ACT"},{n:"95",t:"Javi Rodríguez"},
+    {n:"96",t:"Starfelt"},{n:"96 Bis",t:"Yoel Lago",bis:"PKT"},
+    {n:"97",t:"Marcos Alonso"},{n:"98",t:"Mingueza"},{n:"99",t:"Carreira"},
+    {n:"100",t:"Ilaix Moriba"},{n:"101",t:"Fran Beltrán"},
+    {n:"101 Bis",t:"Miguel Román",bis:"ACT"},{n:"102",t:"Sotelo"},
+    {n:"102 Bis",t:"Vecino",bis:"ACT"},{n:"103",t:"Hugo Álvarez"},
+    {n:"104",t:"Swedberg"},{n:"104 Bis",t:"Fer López",bis:"ACT"},
+    {n:"105",t:"Bryan Zaragoza"},{n:"105 Bis",t:"El-Abdellaoui",bis:"SMO"},
+    {n:"106",t:"Iago Aspas — Capitán"},
+    {n:"107",t:"Borja Iglesias"},{n:"108",t:"Jutglà"},
+    {n:"108 Bis",t:"Pablo Durán",bis:"PKT"}
+  ]},
+  { nombre:"Elche CF", cartas:[
+    {n:"109",t:"Escudo"},{n:"109 Bis",t:"Stadium Card - Martínez Valero",bis:"STD"},
+    {n:"110",t:"Iñaki Peña"},{n:"111",t:"Dituro"},{n:"112",t:"Álvaro Núñez"},
+    {n:"112 Bis",t:"Héctor Fort",bis:"PKT"},{n:"113",t:"Chust"},
+    {n:"114",t:"Bigas — Capitán"},{n:"115",t:"Affengruber"},{n:"116",t:"Pedrosa"},
+    {n:"117",t:"Fede Redondo"},{n:"117 Bis",t:"Gonzalo Villar",bis:"ACT"},
+    {n:"118",t:"Germán Valera"},{n:"119",t:"Martim Neto"},{n:"120",t:"Febas"},
+    {n:"121",t:"Marc Aguado"},{n:"122",t:"Rodri Mendoza"},
+    {n:"122 Bis",t:"Morente",bis:"ACT"},{n:"123",t:"Josan"},
+    {n:"123 Bis",t:"Cepeda",bis:"ACT"},{n:"124",t:"Álvaro Rodríguez"},
+    {n:"125",t:"André Silva"},{n:"126",t:"Rafa Mir"}
+  ]},
+  { nombre:"RCD Espanyol", cartas:[
+    {n:"127",t:"Escudo"},{n:"127 Bis",t:"Stadium Card - RCDE Stadium",bis:"STD"},
+    {n:"128",t:"Dmitrovic"},{n:"129",t:"Fortuño"},{n:"130",t:"El Hilali"},
+    {n:"131",t:"Calero"},{n:"132",t:"Riedel"},{n:"133",t:"Cabrera"},
+    {n:"134",t:"Carlos Romero"},{n:"135",t:"Pol Lozano"},{n:"136",t:"Urko"},
+    {n:"137",t:"Edu Expósito"},{n:"138",t:"Terrats"},
+    {n:"138 Bis",t:"Pickel",bis:"BOX"},{n:"139",t:"Antoniu Roca"},
+    {n:"139 Bis",t:"Jofre",bis:"ACT"},{n:"140",t:"Dolan"},
+    {n:"141",t:"Roberto Fernández"},{n:"142",t:"Kike García"},
+    {n:"143",t:"Puado — Capitán"},{n:"143 Bis",t:"Ngonge",bis:"ACT"},
+    {n:"144",t:"Pere Milla"},{n:"144 Bis",t:"Koleosho",bis:"PKT"}
+  ]},
+  { nombre:"Getafe CF", cartas:[
+    {n:"145",t:"Escudo"},{n:"145 Bis",t:"Stadium Card - Coliseum",bis:"STD"},
+    {n:"146",t:"David Soria"},{n:"147",t:"Letáček"},{n:"148",t:"Iglesias"},
+    {n:"149",t:"Kiko Femenía"},{n:"150",t:"Djené — Capitán"},
+    {n:"151",t:"Domingos Duarte"},{n:"152",t:"Abqar"},
+    {n:"152 Bis",t:"Zaid Romero",bis:"ACT"},{n:"153",t:"Diego Rico"},
+    {n:"153 Bis",t:"Boselli",bis:"ACT"},{n:"154",t:"Davinchi"},
+    {n:"155",t:"Mario Martín"},{n:"156",t:"Arambarri"},{n:"157",t:"Milla"},
+    {n:"158",t:"Neyou"},{n:"159",t:"Javi Muñoz"},{n:"160",t:"Borja Mayoral"},
+    {n:"160 Bis",t:"Luis Vázquez",bis:"ACT"},{n:"161",t:"Liso"},
+    {n:"161 Bis",t:"Satriano",bis:"ACT"},{n:"162",t:"Coba"},
+    {n:"162 Bis",t:"Álex Xancris",bis:"PKT"}
+  ]},
+  { nombre:"Girona FC", cartas:[
+    {n:"163",t:"Escudo"},{n:"163 Bis",t:"Stadium Card - Montilivi",bis:"STD"},
+    {n:"164",t:"Gazzaniga"},{n:"165",t:"Livakovic"},
+    {n:"165 Bis",t:"Ter Stegen",bis:"ACT"},{n:"166",t:"Arnau"},
+    {n:"167",t:"Hugo Rincón"},{n:"168",t:"Vitor Reis"},
+    {n:"169",t:"Blind"},{n:"170",t:"Francés"},
+    {n:"171",t:"Álex Moreno"},{n:"172",t:"Witsel"},
+    {n:"172 Bis",t:"Fran Beltrán",bis:"ACT"},{n:"173",t:"Ounahi"},
+    {n:"174",t:"Iván Martín"},{n:"174 Bis",t:"Echeverri",bis:"ACT"},
+    {n:"175",t:"Yáser Asprilla"},{n:"175 Bis",t:"Lemar",bis:"BOX"},
+    {n:"176",t:"Joel Roca"},{n:"176 Bis",t:"Portu",bis:"PKT"},
+    {n:"177",t:"Tsygankov"},{n:"178",t:"Vanat"},
+    {n:"179",t:"Stuani — Capitán"},{n:"180",t:"Bryan Gil"}
+  ]},
+  { nombre:"Levante UD", cartas:[
+    {n:"181",t:"Escudo"},{n:"181 Bis",t:"Stadium Card - Ciutat de València",bis:"STD"},
+    {n:"182",t:"Ryan"},{n:"183",t:"Pablo Campos"},{n:"184",t:"Toljan"},
+    {n:"185",t:"Dela"},{n:"186",t:"Elgezabal"},{n:"187",t:"Matías Moreno"},
+    {n:"188",t:"Manu Sánchez"},{n:"189",t:"Pampín"},
+    {n:"190",t:"Oriol Rey"},{n:"190 Bis",t:"Raghouber",bis:"ACT"},
+    {n:"191",t:"Pablo Martínez — Capitán"},{n:"192",t:"Olasagasti"},
+    {n:"192 Bis",t:"Iker Losada",bis:"SMO"},
+    {n:"193",t:"Vencedor"},{n:"193 Bis",t:"Arriaga",bis:"PKT"},
+    {n:"194",t:"Carlos Álvarez"},{n:"194 Bis",t:"Tunde",bis:"SMO"},
+    {n:"195",t:"Morales"},{n:"195 Bis",t:"Paco Cortés",bis:"ACT"},
+    {n:"196",t:"Brugué"},{n:"197",t:"Iván Romero"},{n:"198",t:"Etta Eyong"},
+    {n:"198 Bis",t:"Kovalipou",bis:"BOX"}
+  ]},
+  { nombre:"Real Madrid", cartas:[
+    {n:"199",t:"Escudo"},{n:"199 Bis",t:"Stadium Card - Santiago Bernabéu",bis:"STD"},
+    {n:"200",t:"Courtois"},{n:"201",t:"Lunin"},{n:"202",t:"Carvajal — Capitán"},
+    {n:"203",t:"Trent"},{n:"204",t:"Militao"},{n:"205",t:"Huijsen"},
+    {n:"206",t:"Rüdiger"},{n:"206 Bis",t:"Asencio",bis:"BOX"},
+    {n:"207",t:"Carreras"},{n:"207 Bis",t:"Fran García",bis:"ACT"},
+    {n:"208",t:"Tchouaméni"},{n:"208 Bis",t:"Camavinga",bis:"SPO"},
+    {n:"209",t:"Fede Valverde"},{n:"210",t:"Bellingham"},
+    {n:"211",t:"Güler"},{n:"211 Bis",t:"Dani Ceballos",bis:"SMO"},
+    {n:"212",t:"Mastantuono"},{n:"213",t:"Rodrygo"},{n:"214",t:"Mbappé"},
+    {n:"215",t:"Gonzalo"},{n:"215 Bis",t:"Brahim Díaz",bis:"PKT"},
+    {n:"216",t:"Vinícius"}
+  ]},
+  { nombre:"RCD Mallorca", cartas:[
+    {n:"217",t:"Escudo"},{n:"217 Bis",t:"Stadium Card - Son Moix",bis:"STD"},
+    {n:"218",t:"Leo Román"},{n:"219",t:"Bergström"},{n:"220",t:"Morey"},
+    {n:"221",t:"Maffeo"},{n:"222",t:"Valjent"},{n:"223",t:"Raíllo — Capitán"},
+    {n:"224",t:"Kumbulla"},{n:"225",t:"Mojica"},{n:"225 Bis",t:"Lato",bis:"PKT"},
+    {n:"226",t:"Samú Costa"},{n:"227",t:"Antonio Sánchez"},
+    {n:"227 Bis",t:"Mascarell",bis:"PKT"},
+    {n:"228",t:"Darder"},{n:"229",t:"Morlanes"},{n:"230",t:"Pablo Torre"},
+    {n:"231",t:"Asano"},{n:"232",t:"Muriqi"},{n:"233",t:"Mateo Joseph"},
+    {n:"233 Bis",t:"Luvumbo",bis:"ACT"},{n:"234",t:"Jan Virgili"},
+    {n:"234 Bis",t:"Abdón",bis:"SPO"}
+  ]},
+  { nombre:"CA Osasuna", cartas:[
+    {n:"235",t:"Escudo"},{n:"235 Bis",t:"Stadium Card - El Sadar",bis:"STD"},
+    {n:"236",t:"Sergio Herrera — Capitán"},{n:"237",t:"Aitor Fernández"},
+    {n:"238",t:"Rosier"},{n:"239",t:"Boyomo"},{n:"240",t:"Catena"},
+    {n:"241",t:"Herrando"},{n:"242",t:"Juan Cruz"},
+    {n:"243",t:"Abel Bretones"},{n:"243 Bis",t:"Galán",bis:"ACT"},
+    {n:"244",t:"Torró"},{n:"245",t:"Moncayola"},{n:"246",t:"Moi Gómez"},
+    {n:"247",t:"Rubén García"},{n:"248",t:"Aimar Oroz"},
+    {n:"249",t:"Víctor Muñoz"},{n:"250",t:"Raúl García"},
+    {n:"251",t:"Budimir"},{n:"252",t:"Becker"},
+    {n:"252 Bis",t:"Raúl Moro",bis:"ACT"}
+  ]},
+  { nombre:"Real Oviedo", cartas:[
+    {n:"253",t:"Escudo"},{n:"253 Bis",t:"Stadium Card - Carlos Tartiere",bis:"STD"},
+    {n:"254",t:"Aarón Escandell"},{n:"255",t:"Moldovan"},{n:"256",t:"Nacho Vidal"},
+    {n:"257",t:"Eric Bailly"},{n:"258",t:"David Carmo"},{n:"259",t:"Dani Calvo"},
+    {n:"259 Bis",t:"David Costas",bis:"PKT"},
+    {n:"260",t:"Rahim Alhassane"},{n:"261",t:"Colombatto"},
+    {n:"261 Bis",t:"Ejaria",bis:"PKT"},
+    {n:"262",t:"Reina"},{n:"263",t:"Dendoncker"},
+    {n:"263 Bis",t:"Sibo",bis:"ACT"},{n:"264",t:"Cazorla — Capitán"},
+    {n:"265",t:"Ilic"},{n:"265 Bis",t:"Nico Fonseca",bis:"ACT"},
+    {n:"266",t:"Hassan"},{n:"267",t:"Brekalo"},
+    {n:"267 Bis",t:"Thiago Fernández",bis:"ACT"},
+    {n:"268",t:"Ilyas Chaira"},{n:"269",t:"Fede Viñas"},{n:"270",t:"Rondón"}
+  ]},
+  { nombre:"Rayo Vallecano", cartas:[
+    {n:"271",t:"Escudo"},{n:"271 Bis",t:"Stadium Card - Campo de Vallecas",bis:"STD"},
+    {n:"272",t:"Batalla"},{n:"273",t:"Cárdenas"},{n:"274",t:"Ratiu"},
+    {n:"275",t:"Balliu"},{n:"276",t:"Lejeune"},{n:"277",t:"Luiz Felipe"},
+    {n:"277 Bis",t:"Nobel Mendy",bis:"ACT"},{n:"278",t:"Pep Chavarría"},
+    {n:"278 Bis",t:"Espino",bis:"SMO"},
+    {n:"279",t:"Pathé Ciss"},{n:"280",t:"Unai López"},
+    {n:"281",t:"Óscar Valentín — Capitán"},{n:"282",t:"Isi"},
+    {n:"283",t:"Pedro Díaz"},{n:"283 Bis",t:"Gumbau",bis:"PKT"},
+    {n:"284",t:"Álvaro García"},
+    {n:"285",t:"Fran Pérez"},{n:"285 Bis",t:"Carlos Martín",bis:"ACT"},
+    {n:"286",t:"Camello"},{n:"287",t:"De Frutos"},
+    {n:"288",t:"Alemao"},{n:"288 Bis",t:"Ilias",bis:"ACT"}
+  ]},
+  { nombre:"Real Sociedad", cartas:[
+    {n:"289",t:"Escudo"},{n:"289 Bis",t:"Stadium Card - Reale Arena",bis:"STD"},
+    {n:"290",t:"Remiro"},{n:"291",t:"Marrero"},{n:"292",t:"Aramburu"},
+    {n:"293",t:"Aritz Elustondo"},{n:"293 Bis",t:"Jon Martín",bis:"ACT"},
+    {n:"294",t:"Zubeldia"},{n:"295",t:"Caleta-Car"},{n:"296",t:"Sergio Gómez"},
+    {n:"297",t:"Gorrotxategi"},{n:"298",t:"Turrientes"},{n:"299",t:"Pablo Marín"},
+    {n:"299 Bis",t:"Yangel Herrera",bis:"PKT"},
+    {n:"300",t:"Carlos Soler"},{n:"301",t:"Brais Méndez"},
+    {n:"302",t:"Kubo"},{n:"303",t:"Barrenetxea"},
+    {n:"304",t:"Oyarzabal — Capitán"},{n:"305",t:"Óskarsson"},
+    {n:"305 Bis",t:"Wesley",bis:"ACT"},{n:"306",t:"Guedes"}
+  ]},
+  { nombre:"Sevilla FC", cartas:[
+    {n:"307",t:"Escudo"},{n:"307 Bis",t:"Stadium Card - Sánchez-Pizjuán",bis:"STD"},
+    {n:"308",t:"Vlachodimos"},{n:"309",t:"Nyland"},{n:"310",t:"Carmona"},
+    {n:"311",t:"Juanlu"},{n:"312",t:"Azpilicueta"},{n:"313",t:"Kike Salas"},
+    {n:"314",t:"Marcao"},{n:"314 Bis",t:"Oso",bis:"ACT"},
+    {n:"315",t:"Suazo"},{n:"316",t:"Gudelj — Capitán"},
+    {n:"317",t:"Agoumé"},{n:"318",t:"Sow"},{n:"319",t:"Batista Mendy"},
+    {n:"320",t:"Vargas"},{n:"321",t:"Ejuke"},
+    {n:"321 Bis",t:"Alfon",bis:"PKT"},
+    {n:"322",t:"Isaac Romero"},{n:"323",t:"Akor Adams"},
+    {n:"324",t:"Alexis Sánchez"},{n:"324 Bis",t:"Maupay",bis:"ACT"}
+  ]},
+  { nombre:"Valencia CF", cartas:[
+    {n:"325",t:"Escudo"},{n:"325 Bis",t:"Stadium Card - Mestalla",bis:"STD"},
+    {n:"326",t:"Agirrezabala"},{n:"327",t:"Dimitrievski"},{n:"328",t:"Foulquier"},
+    {n:"329",t:"Correia"},{n:"330",t:"Tárrega"},{n:"331",t:"Copete"},
+    {n:"332",t:"Diakhaby"},{n:"332 Bis",t:"Nuñez",bis:"ACT"},
+    {n:"333",t:"Gayà — Capitán"},{n:"334",t:"Pepelu"},
+    {n:"334 Bis",t:"Guido Rodríguez",bis:"ACT"},
+    {n:"335",t:"Santamaria"},{n:"336",t:"Javi Guerra"},
+    {n:"336 Bis",t:"Ugrinic",bis:"PKT"},
+    {n:"337",t:"André Almeida"},{n:"338",t:"Luis Rioja"},
+    {n:"339",t:"Diego López"},{n:"340",t:"Ramazani"},
+    {n:"340 Bis",t:"Raba",bis:"BOX"},
+    {n:"341",t:"Danjuma"},{n:"341 Bis",t:"Sadiq",bis:"ACT"},
+    {n:"342",t:"Hugo Duro"},{n:"342 Bis",t:"Lucas Beltrán",bis:"SPO"}
+  ]},
+  { nombre:"Villarreal CF", cartas:[
+    {n:"343",t:"Escudo"},{n:"343 Bis",t:"Stadium Card - La Cerámica",bis:"STD"},
+    {n:"344",t:"Luiz Júnior"},{n:"345",t:"Arnau Tenas"},{n:"346",t:"Mouriño"},
+    {n:"346 Bis",t:"Freeman",bis:"ACT"},{n:"347",t:"Foyth"},
+    {n:"347 Bis",t:"Pau Navarro",bis:"SMO"},
+    {n:"348",t:"Rafa Marín"},{n:"349",t:"Renato Veiga"},
+    {n:"350",t:"Sergi Cardona"},{n:"350 Bis",t:"Pedraza",bis:"ACT"},
+    {n:"351",t:"Santi Comesaña"},{n:"352",t:"Pape Gueye"},
+    {n:"353",t:"Parejo — Capitán"},{n:"354",t:"Thomas"},
+    {n:"355",t:"Moleiro"},{n:"355 Bis",t:"Alfon",bis:"ACT"},
+    {n:"356",t:"Buchanan"},{n:"356 Bis",t:"Solomon",bis:"BOX"},
+    {n:"357",t:"Mikautadze"},{n:"358",t:"Pépé"},
+    {n:"358 Bis",t:"Ilias",bis:"PKT"},
+    {n:"359",t:"Oluwaseyi"},{n:"360",t:"Ayoze"},
+    {n:"360 Bis",t:"Gerard Moreno",bis:"PKT"}
+  ]}
+];
+
+const SERIES = [
+  { nombre:"¡Vamos! (361–380)", cartas:[
+    {n:"361",t:"D. Alavés"},{n:"362",t:"Athletic Club"},{n:"363",t:"Atlético de Madrid"},
+    {n:"364",t:"FC Barcelona"},{n:"365",t:"Real Betis"},{n:"366",t:"RC Celta"},
+    {n:"367",t:"Elche CF"},{n:"368",t:"RCD Espanyol"},{n:"369",t:"Getafe CF"},
+    {n:"370",t:"Girona FC"},{n:"371",t:"Levante UD"},{n:"372",t:"Real Madrid"},
+    {n:"373",t:"RCD Mallorca"},{n:"374",t:"CA Osasuna"},{n:"375",t:"Real Oviedo"},
+    {n:"376",t:"Rayo Vallecano"},{n:"377",t:"Real Sociedad"},{n:"378",t:"Sevilla FC"},
+    {n:"379",t:"Valencia CF"},{n:"380",t:"Villarreal CF"}
+  ]},
+  { nombre:"Guantes de Oro (381–387)", cartas:[
+    {n:"381",t:"Sivera (D. Alavés)"},{n:"382",t:"Joan García (FC Barcelona)"},
+    {n:"383",t:"David Soria (Getafe CF)"},{n:"384",t:"Sergio Herrera (CA Osasuna)"},
+    {n:"385",t:"Batalla (Rayo Vallecano)"},{n:"386",t:"Remiro (Real Sociedad)"},
+    {n:"387",t:"Agirrezabala (Valencia CF)"}
+  ]},
+  { nombre:"Kryptonita (388–396)", cartas:[
+    {n:"388",t:"Laporte (Athletic Club)"},{n:"389",t:"Vivian (Athletic Club)"},
+    {n:"390",t:"Le Normand (Atlético)"},{n:"391",t:"Affengruber (Elche CF)"},
+    {n:"392",t:"Cabrera (RCD Espanyol)"},{n:"393",t:"Militao (Real Madrid)"},
+    {n:"394",t:"Lejeune (Rayo Vallecano)"},{n:"395",t:"Tárrega (Valencia CF)"},
+    {n:"396",t:"Mouriño (Villarreal CF)"}
+  ]},
+  { nombre:"Diamantes (397–414)", cartas:[
+    {n:"397",t:"Rego (Athletic Club)"},{n:"398",t:"Dro (FC Barcelona)"},
+    {n:"399",t:"Valentín Gómez (Real Betis)"},{n:"400",t:"Pablo García (Real Betis)"},
+    {n:"401",t:"Rodri Mendoza (Elche CF)"},{n:"402",t:"Riedel (RCD Espanyol)"},
+    {n:"403",t:"Davinchi (Getafe CF)"},{n:"404",t:"Liso (Getafe CF)"},
+    {n:"405",t:"Vitor Reis (Girona FC)"},{n:"406",t:"Joel Roca (Girona FC)"},
+    {n:"407",t:"Carlos Álvarez (Levante UD)"},{n:"408",t:"Etta Eyong (Levante UD)"},
+    {n:"409",t:"Fran González (Real Madrid)"},{n:"410",t:"Gonzalo (Real Madrid)"},
+    {n:"411",t:"Jan Virgili (RCD Mallorca)"},{n:"412",t:"Mateo Joseph (RCD Mallorca)"},
+    {n:"413",t:"Víctor Muñoz (CA Osasuna)"},{n:"414",t:"Renato Veiga (Villarreal CF)"}
+  ]},
+  { nombre:"Influencers (415–423 + 4 Bis)", cartas:[
+    {n:"415",t:"Barrios (Atlético de Madrid)"},{n:"415 Bis",t:"Ruiz de Galarreta (Athletic Club) — Sobre Premium",bis:true},
+    {n:"416",t:"Sotelo (RC Celta)"},{n:"416 Bis",t:"Pablo Fornals (Real Betis) — Sobre Premium",bis:true},
+    {n:"417",t:"Febas (Elche CF)"},{n:"417 Bis",t:"Pablo Torre (RCD Mallorca) — Sobre Premium",bis:true},
+    {n:"418",t:"Edu Expósito (RCD Espanyol)"},{n:"418 Bis",t:"Pape Gueye (Villarreal CF) — Sobre Premium",bis:true},
+    {n:"419",t:"Milla (Getafe CF)"},
+    {n:"420",t:"Darder (RCD Mallorca)"},
+    {n:"421",t:"Aimar Oroz (CA Osasuna)"},
+    {n:"422",t:"Cazorla (Real Oviedo)"},
+    {n:"423",t:"Unai López (Rayo Vallecano)"}
+  ]},
+  { nombre:"Protas (424–441)", cartas:[
+    {n:"424",t:"Tenaglia (D. Alavés)"},{n:"425",t:"Carlos Vicente (D. Alavés)"},
+    {n:"426",t:"Eric García (FC Barcelona)"},{n:"427",t:"Cucho Hernández (Real Betis)"},
+    {n:"428",t:"Borja Iglesias (RC Celta)"},{n:"429",t:"Dolan (RCD Espanyol)"},
+    {n:"430",t:"Vanat (Girona FC)"},{n:"431",t:"Manu Sánchez (Levante UD)"},
+    {n:"432",t:"Tchouaméni (Real Madrid)"},{n:"433",t:"Leo Román (RCD Mallorca)"},
+    {n:"434",t:"Aarón Escandell (Real Oviedo)"},{n:"435",t:"Hassan (Real Oviedo)"},
+    {n:"436",t:"Carlos Soler (Real Sociedad)"},{n:"437",t:"Gorrotxategi (Real Sociedad)"},
+    {n:"438",t:"Batista Mendy (Sevilla FC)"},{n:"439",t:"Alexis Sánchez (Sevilla FC)"},
+    {n:"440",t:"Danjuma (Valencia CF)"},{n:"441",t:"Buchanan (Villarreal CF)"}
+  ]},
+  { nombre:"Super Cracks (442–467)", cartas:[
+    {n:"442",t:"Unai Simón (Athletic Club)"},{n:"443",t:"Jauregizar (Athletic Club)"},
+    {n:"444",t:"Oblak (Atlético de Madrid)"},{n:"445",t:"Marcos Llorente (Atlético)"},
+    {n:"446",t:"Álex Baena (Atlético)"},{n:"447",t:"Almada (Atlético)"},
+    {n:"448",t:"Griezmann (Atlético)"},{n:"449",t:"Koundé (FC Barcelona)"},
+    {n:"450",t:"Balde (FC Barcelona)"},{n:"451",t:"Raphinha (FC Barcelona)"},
+    {n:"452",t:"Lewandowski (FC Barcelona)"},{n:"453",t:"Rashford (FC Barcelona)"},
+    {n:"454",t:"Isco (Real Betis)"},{n:"455",t:"Lo Celso (Real Betis)"},
+    {n:"456",t:"Antony (Real Betis)"},{n:"457",t:"Courtois (Real Madrid)"},
+    {n:"458",t:"Carreras (Real Madrid)"},{n:"459",t:"Fede Valverde (Real Madrid)"},
+    {n:"460",t:"Mastantuono (Real Madrid)"},{n:"461",t:"Budimir (CA Osasuna)"},
+    {n:"462",t:"Isi (Rayo Vallecano)"},{n:"463",t:"Kubo (Real Sociedad)"},
+    {n:"464",t:"Vargas (Sevilla FC)"},{n:"465",t:"Javi Guerra (Valencia CF)"},
+    {n:"466",t:"Moleiro (Villarreal CF)"},{n:"467",t:"Pépé (Villarreal CF)"}
+  ]},
+  { nombre:"Balón de Oro & Especiales (468–478)", cartas:[
+    {n:"468",t:"Card Champions — FC Barcelona campeón LaLiga"},
+    {n:"469",t:"Nico Williams (Athletic Club)"},{n:"470",t:"Julián Álvarez (Atlético)"},
+    {n:"471",t:"Pedri (FC Barcelona)"},{n:"472",t:"Lamine Yamal (FC Barcelona)"},
+    {n:"473",t:"Vinícius (Real Madrid)"},{n:"474",t:"Mbappé (Real Madrid)"},
+    {n:"475",t:"Balón de Oro Excellence — Carvajal"},
+    {n:"476",t:"Card Atómica (4 jugadores)"},{n:"477",t:"Card Invencible (6 jugadores)"},
+    {n:"478",t:"Campeón Card"}
+  ]}
+];
+
+const ENTRENADORES = [
+  {n:"479",t:"Eduardo Coudet (D. Alavés)"},{n:"480",t:"Ernesto Valverde (Athletic Club)"},
+  {n:"481",t:"Diego Pablo Simeone (Atlético)"},{n:"482",t:"Hansi Flick (FC Barcelona)"},
+  {n:"483",t:"Manuel Pellegrini (Real Betis)"},{n:"484",t:"Claudio Giráldez (RC Celta)"},
+  {n:"485",t:"Eder Sarabia (Elche CF)"},{n:"486",t:"Manolo González (RCD Espanyol)"},
+  {n:"487",t:"José Bordalás (Getafe CF)"},{n:"488",t:"Míchel (Girona FC)"},
+  {n:"489",t:"Luís Castro (Levante UD)"},{n:"490",t:"Álvaro Arbeloa (Real Madrid)"},
+  {n:"491",t:"Jagoba Arrasate (RCD Mallorca)"},{n:"492",t:"Alessio Lisci (CA Osasuna)"},
+  {n:"493",t:"Guillermo Almada (Real Oviedo)"},{n:"494",t:"Íñigo Pérez (Rayo Vallecano)"},
+  {n:"495",t:"Pellegrino Matarazzo (Real Sociedad)"},{n:"496",t:"Matías Almeyda (Sevilla FC)"},
+  {n:"497",t:"Carlos Corberán (Valencia CF)"},{n:"498",t:"Marcelino García (Villarreal CF)"}
+];
+
+// PLUS: cartas numeradas de la actualización de marzo 2026
+const PLUS = [
+  // Nuevos Guantes de Oro
+  {n:"499",t:"Dmitrovic (RCD Espanyol)",bis:true},{n:"500",t:"Ter Stegen (Girona FC)",bis:true},
+  // Nuevos Kryptonita
+  {n:"501",t:"Pubill (Atlético de Madrid)",bis:true},{n:"502",t:"Gerard Martín (FC Barcelona)",bis:true},
+  {n:"503",t:"Asencio (Real Madrid)",bis:true},
+  // Nuevos Diamantes
+  {n:"504",t:"Selton (Athletic Club)",bis:true},{n:"505",t:"El-Abdellaoui (RC Celta)",bis:true},
+  {n:"506",t:"Echeverri (Girona FC)",bis:true},{n:"507",t:"Nobel Mendy (Rayo Vallecano)",bis:true},
+  {n:"508",t:"Oso (Sevilla FC)",bis:true},
+  // Nuevos Protas
+  {n:"509",t:"Rodri Mendoza (Atlético de Madrid)",bis:true},{n:"510",t:"Aitor Ruibal (Real Betis)",bis:true},
+  {n:"511",t:"Miguel Román (RC Celta)",bis:true},{n:"512",t:"Carlos Romero (RCD Espanyol)",bis:true},
+  {n:"513",t:"Maupay (Sevilla FC)",bis:true},
+  // Nuevos Super Crack
+  {n:"514",t:"Giuliano (Atlético de Madrid)",bis:true},{n:"515",t:"Joao Cancelo (FC Barcelona)",bis:true},
+  {n:"516",t:"Rodrygo (Real Madrid)",bis:true},{n:"517",t:"Guedes (Real Sociedad)",bis:true},
+  // Master Míster
+  {n:"518",t:"Hansi Flick (FC Barcelona) — Master Míster",bis:true},
+  {n:"519",t:"Marcelino García (Villarreal CF) — Master Míster",bis:true},
+  // Card Fantástica
+  {n:"520",t:"Card Fantástica",bis:true},
+  // Nuevos Balón de Oro
+  {n:"521",t:"Courtois (Real Madrid) — Nuevo Balón de Oro",bis:true},
+  {n:"522",t:"Pedri (FC Barcelona) — Nuevo Balón de Oro Autógrafo Especial",bis:true},
+  // Momentum
+  {n:"MOM",t:"Gonzalo (Real Madrid) — Card Momentum",bis:true},
+  {n:"MOM",t:"Joan García (FC Barcelona) — Card Momentum",bis:true},
+  // Autógrafos Originales
+  {n:"AO×200",t:"Autógrafo Original — Radu (200 uds)"},
+  {n:"AO×200",t:"Autógrafo Original — Carmona (200 uds)"},
+  {n:"AO×200",t:"Autógrafo Original — Iñaki Peña (200 uds)"},
+  {n:"AO×200",t:"Autógrafo Original — Guruzeta (200 uds)"},
+  {n:"AO×100",t:"Autógrafo Original — Aramburu (100 uds)"},
+  {n:"AO×50",t:"Autógrafo Original — Fermín (50 uds)"},
+  {n:"AO×50",t:"Autógrafo Original — Gerard Moreno (50 uds)"}
+];
+
+// FUERA DE COLECCIÓN: no necesarias para completarla
+const FUERA = [
+  {g:"Momentum (651–657)", cartas:[
+    {n:"651",t:"Koke (Atlético de Madrid) — 1ª Edición y Sobre Momentum Oro"},
+    {n:"652",t:"Pedri (FC Barcelona) — 1ª Edición y Sobre Momentum Oro"},
+    {n:"653",t:"Iago Aspas (RC Celta)"},
+    {n:"654",t:"Etta Eyong (Levante UD)"},
+    {n:"655",t:"Álvaro García (Rayo Vallecano)"},
+    {n:"656",t:"Momentum On-Line — Jugadores Portada (carta online)"},
+    {n:"657",t:"MaxiMomentum — El Clásico: Yamal vs Vinícius (FC Barcelona / Real Madrid)"}
+  ]},
+  {g:"Nuevo Momentum — Adrenalyn Plus (662–663)", cartas:[
+    {n:"662",t:"Joan García (FC Barcelona) — Adrenalyn Plus"},
+    {n:"663",t:"Gonzalo (Real Madrid) — Adrenalyn Plus"}
+  ]},
+  {g:"Míticos Invencibles (658–659)", cartas:[
+    {n:"658",t:"Oro Puro — CR7, Messi, Modric, Ronaldinho, Benzema (FC Barcelona / Real Madrid)"},
+    {n:"659",t:"¡Atleti, Atleti! — Simeone, Oblak, Giménez, Suárez, Koke (Atlético de Madrid)"}
+  ]},
+  {g:"Panini Extra Gold (660–661)", cartas:[
+    {n:"660",t:"Lamine Yamal (FC Barcelona) — Top joven mundial 2025"},
+    {n:"661",t:"Mbappé (Real Madrid) — Top goleador europeo 2025"}
+  ]},
+  {g:"New Masters — 15 Parallels (debutantes temporada)", cartas:[
+    {n:"NM/1",t:"New Master 1 — (jugador debut en LaLiga)"},{n:"NM/2",t:"New Master 2 — (jugador debut en LaLiga)"},
+    {n:"NM/3",t:"New Master 3 — (jugador debut en LaLiga)"},{n:"NM/4",t:"New Master 4 — (jugador debut en LaLiga)"},
+    {n:"NM/5",t:"New Master 5 — (jugador debut en LaLiga)"},{n:"NM/6",t:"New Master 6 — (jugador debut en LaLiga)"},
+    {n:"NM/7",t:"New Master 7 — (jugador debut en LaLiga)"},{n:"NM/8",t:"New Master 8 — (jugador debut en LaLiga)"},
+    {n:"NM/9",t:"New Master 9 — (jugador debut en LaLiga)"},{n:"NM/10",t:"New Master 10 — (jugador debut en LaLiga)"},
+    {n:"NM/11",t:"New Master 11 — (jugador debut en LaLiga)"},{n:"NM/12",t:"New Master 12 — (jugador debut en LaLiga)"},
+    {n:"NM/13",t:"New Master 13 — (jugador debut en LaLiga)"},{n:"NM/14",t:"New Master 14 — (jugador debut en LaLiga)"},
+    {n:"NM/15",t:"New Master 15 — (jugador debut en LaLiga)"}
+  ]},
+  {g:"Ediciones Limitadas — Megapack & Tin Box", cartas:[
+    {n:"601",t:"Nico González (Atlético de Madrid) — Megapack de Lanzamiento"},
+    {n:"602",t:"De Jong (FC Barcelona) — Megapack de Lanzamiento"},
+    {n:"603",t:"Huijsen (Real Madrid) — Megapack de Lanzamiento"},
+    {n:"604",t:"Sancet (Athletic Club) — Tin Box Serie Oro"},
+    {n:"605",t:"Koke (Atlético de Madrid) — Tin Box Serie Oro"},
+    {n:"606",t:"Güler (Real Madrid) — Tin Box Serie Oro"},
+    {n:"607",t:"Mikautadze (Villarreal CF) — Tin Box Serie Oro"}
+  ]},
+  {g:"Ediciones Limitadas — Sobre Premium & Pocket Box", cartas:[
+    {n:"EL PLT",t:"Cazorla (Real Oviedo) — Edición Limitada Platinum (Pocket Box Platinum)"},
+    {n:"EL",t:"Ed. Limitada exclusiva Sobre Premium (8 posibles diferentes)"},
+    {n:"EL",t:"Ed. Limitada exclusiva Sobre Premium Oro (8 cartas)"},
+    {n:"EL",t:"Ed. Limitadas exclusivas Pocket Box Platinum (×3)"}
+  ]},
+  {g:"Dream Box 2026 — Total Kings (Edición Única)", cartas:[
+    {n:"TK/1",t:"Casillas — Copa LaLiga 2011-12 (Real Madrid)"},
+    {n:"TK/2",t:"Cristiano Ronaldo — Copa LaLiga 2016-17 (Real Madrid)"},
+    {n:"TK/3",t:"Iniesta — Copa LaLiga 2017-18 (FC Barcelona)"},
+    {n:"TK/4",t:"Messi — Copa LaLiga 2018-19 (FC Barcelona)"},
+    {n:"TK/5",t:"Koke — Copa LaLiga 2020-21 (Atlético de Madrid)"},
+    {n:"TK/6",t:"Lamine Yamal — Copa LaLiga 2024-25 (FC Barcelona)"},
+    {n:"TK/7",t:"Oyarzabal — Copa del Rey 2019-20 (Real Sociedad)"},
+    {n:"TK/8",t:"Joaquín — Copa del Rey 2021-22 (Real Betis)"},
+    {n:"TK/9",t:"Nico Williams — Copa del Rey 2023-24 (Athletic Club)"},
+    {n:"TK/10",t:"Oblak — Trofeo Zamora 2024-25 (Atlético de Madrid)"},
+    {n:"TK/11",t:"Messi — Balón de Oro 2012 (FC Barcelona)"},
+    {n:"TK/12",t:"Cristiano Ronaldo — Balón de Oro 2016 (Real Madrid)"},
+    {n:"TK/13",t:"Modric — Balón de Oro 2018 (Real Madrid)"},
+    {n:"TK/14",t:"Benzema — Balón de Oro 2022 (Real Madrid)"},
+    {n:"TK/15",t:"Messi — Bota de Oro 2009-10 (FC Barcelona)"},
+    {n:"TK/16",t:"Cristiano Ronaldo — Bota de Oro 2014-15 (Real Madrid)"},
+    {n:"TK/17",t:"Mbappé — Bota de Oro 2024-25 (Real Madrid)"}
+  ]},
+  {g:"Dream Box 2026 — Card Única & Otros", cartas:[
+    {n:"CU/1",t:"Card Única — Sergio Busquets (FC Barcelona)"},
+    {n:"CU/2",t:"Card Única — De Marcos (Athletic Club)"},
+    {n:"ND S/N",t:"Nuevo Diamante S/N — Bardghji (FC Barcelona)"},
+    {n:"ND S/N",t:"Nuevo Diamante S/N — Héctor Fort (Elche CF)"},
+    {n:"ND S/N",t:"Nuevo Diamante S/N — Maciá (Villarreal CF)"},
+    {n:"NBO S/N",t:"Nuevo Balón de Oro S/N — Raphinha (FC Barcelona)"}
+  ]},
+  {g:"Autógrafos Originales Premium (AO)", cartas:[
+    {n:"AO50/1",t:"Nico Williams (Athletic Club) — Sobre Premium Oro"},
+    {n:"AO50/2",t:"Álex Baena (Atlético de Madrid)"},
+    {n:"AO50/3",t:"Almada (Atlético de Madrid) — Sobre Premium"},
+    {n:"AO50/4",t:"Julián Álvarez (Atlético de Madrid) — Sobre Premium Oro"},
+    {n:"AO50/5",t:"Lamine Yamal (FC Barcelona)"},
+    {n:"AO50/6",t:"Raphinha (FC Barcelona)"},
+    {n:"AO50/7",t:"Joan García (FC Barcelona) — Sobre Premium"},
+    {n:"AO50/8",t:"Borja Iglesias (RC Celta)"},
+    {n:"AO50/9",t:"Güler (Real Madrid)"},
+    {n:"AO50/10",t:"Moleiro (Villarreal CF)"},
+    {n:"AO50/11",t:"Fermín (FC Barcelona) — Adrenalyn Plus"},
+    {n:"AO50/12",t:"Gerard Moreno (Villarreal CF) — Adrenalyn Plus"},
+    {n:"AO100/15",t:"Aramburu (Real Sociedad) — Adrenalyn Plus"},
+    {n:"AO100/16",t:"Unai López (Rayo Vallecano) — Dream Box"},
+    {n:"AO200/21",t:"Guruzeta (Athletic Club) — Adrenalyn Plus"},
+    {n:"AO200/22",t:"Carmona (Sevilla FC) — Adrenalyn Plus"},
+    {n:"AO200/23",t:"Iñaki Peña (Elche CF) — Adrenalyn Plus"},
+    {n:"AO200/24",t:"Radu (RC Celta) — Adrenalyn Plus"},
+    {n:"DAO50/1",t:"Doble Autógrafo — Isco + Lo Celso (Real Betis)"},
+    {n:"DAO50/2",t:"Doble Autógrafo — Militao + Carreras (Real Madrid)"}
+  ]},
+  {g:"Autógrafos Prestige (6 cartas en sobres regulares)", cartas:[
+    {n:"PRE/1",t:"Autógrafo Prestige #/100 — jugador 1"},
+    {n:"PRE/2",t:"Autógrafo Prestige #/100 — jugador 2"},
+    {n:"PRE/3",t:"Autógrafo Prestige #/100 — jugador 3"},
+    {n:"PRE/4",t:"Autógrafo Prestige #/100 — jugador 4"},
+    {n:"PRE/5",t:"Autógrafo Prestige #/50 — jugador 5"},
+    {n:"PRE/6",t:"Autógrafo Prestige #/50 — jugador 6"}
+  ]}
+];
+
+// ─── ESTADO ──────────────────────────────────────────────
+const LS_KEY='adrenalyn2526v3';
+let state={checked:{},seccion:'equipos',equipoIdx:0,serieIdx:0,fueraIdx:0,filtroFaltan:false,busqueda:''};
+
+function loadState(){try{const s=localStorage.getItem(LS_KEY);if(s){const p=JSON.parse(s);state.checked=p.checked||{};}}catch(e){}}
+function saveChecked(){try{localStorage.setItem(LS_KEY,JSON.stringify({checked:state.checked}));}catch(e){}}
+function cardKey(sec,grupo,num){return `${sec}::${grupo}::${num}`;}
+
+function toggleCard(key){
+  state.checked[key]=!state.checked[key];saveChecked();
+  const row=document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+  if(row){
+    row.classList.toggle('checked',!!state.checked[key]);
+    if(state.filtroFaltan&&state.checked[key])row.classList.add('hidden');
+    else if(state.filtroFaltan&&!state.checked[key])row.classList.remove('hidden');
+  }
+  updateProgress();updateSectionCount();updateSubnavCounts();
+}
+
+function setSeccion(sec){
+  state.seccion=sec;state.busqueda='';
+  document.getElementById('searchInput').value='';
+  document.getElementById('clearSearch').style.display='none';
+  const secs=['equipos','series','entrenadores','plus','fuera'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',secs[i]===sec));
+  render();
+}
+function setEquipo(idx){state.equipoIdx=idx;render();}
+function setSerie(idx){state.serieIdx=idx;render();}
+function setFuera(idx){state.fueraIdx=idx;render();}
+
+function toggleFiltro(){
+  state.filtroFaltan=!state.filtroFaltan;
+  document.getElementById('filtroBtn').classList.toggle('active',state.filtroFaltan);
+  applyFiltro();
+}
+function applyFiltro(){
+  document.querySelectorAll('.card-row').forEach(row=>{
+    const key=row.dataset.key;if(!key)return;
+    row.classList.toggle('hidden',state.filtroFaltan&&!!state.checked[key]);
+  });
+  checkEmptyState();
+}
+function checkEmptyState(){
+  const content=document.getElementById('content');
+  const visible=content.querySelectorAll('.card-row:not(.hidden)').length;
+  let emp=content.querySelector('.filtro-empty');
+  if(visible===0&&state.filtroFaltan){
+    if(!emp){emp=document.createElement('div');emp.className='empty-state filtro-empty';emp.innerHTML='<div class="empty-icon">🏆</div><strong>¡Sección completa!</strong><br>No te falta ninguna carta aquí.';content.appendChild(emp);}
+  }else if(emp){emp.remove();}
+}
+
+function handleSearch(q){
+  state.busqueda=q.toLowerCase().trim();
+  document.getElementById('clearSearch').style.display=q?'block':'none';
+  if(state.busqueda)renderSearch();else render();
+}
+function renderSearch(){
+  const q=state.busqueda;const results=[];
+  EQUIPOS.forEach(eq=>eq.cartas.forEach(c=>{
+    if(c.n.toLowerCase().includes(q)||c.t.toLowerCase().includes(q))
+      results.push({key:cardKey('eq',eq.nombre,c.n+c.t),n:c.n,t:c.t,sub:eq.nombre,bis:c.bis});
+  }));
+  SERIES.forEach(s=>s.cartas.forEach(c=>{
+    if(c.n.toLowerCase().includes(q)||c.t.toLowerCase().includes(q))
+      results.push({key:cardKey('se',s.nombre,c.n),n:c.n,t:c.t,sub:s.nombre});
+  }));
+  ENTRENADORES.forEach(c=>{
+    if(c.n.toLowerCase().includes(q)||c.t.toLowerCase().includes(q))
+      results.push({key:cardKey('en','ent',c.n),n:c.n,t:c.t,sub:'Entrenadores'});
+  });
+  PLUS.forEach((c,i)=>{
+    if(c.n.toLowerCase().includes(q)||c.t.toLowerCase().includes(q))
+      results.push({key:cardKey('pl','plus',c.n+i),n:c.n,t:c.t,sub:'Plus',bis:c.bis});
+  });
+  const content=document.getElementById('content');
+  if(results.length===0){content.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div>Sin resultados para "<strong>${q}</strong>"</div>`;return;}
+  content.innerHTML=results.map(r=>rowHTML(r.key,r.n,r.t,r.bis,r.sub)).join('');
+  applyFiltro();
+}
+
+// ─── ORIGEN BIS ──────────────────────────────────────────
+const BIS_LABELS={STD:'Stadium',BOX:'Tin Box',PKT:'Pocket Box',ACT:'Plus',SPO:'Premium Oro',SMO:'Momentum Oro'};
+function bisTag(bis){
+  if(!bis)return '';
+  if(bis===true)return `<span class="bis-tag">PLUS</span>`;
+  return `<span class="bis-tag">${BIS_LABELS[bis]||bis}</span>`;
+}
+
+function rowHTML(key,num,nombre,bis,sub){
+  const checked=!!state.checked[key];
+  const hidden=state.filtroFaltan&&checked?'hidden':'';
+  const isBis=!!bis;
+  const subHtml=sub?`<span style="font-size:10px;color:#A0AEC0;margin-left:4px">(${sub})</span>`:'';
+  return `<div class="card-row${isBis?' bis':''}${checked?' checked':''}${hidden?' hidden':''}" data-key="${key}" onclick="toggleCard('${key.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
+    <div class="card-info">
+      <span class="card-num">${num}</span>
+      <span class="card-name">${nombre}${subHtml}</span>
+      ${bisTag(bis)}
+    </div>
+    <div class="checkbox"><span class="checkmark">✓</span></div>
+  </div>`;
+}
+
+function subnavEquiposHTML(){
+  return '<div class="subnav" id="subnavEq">'+
+    EQUIPOS.map((eq,i)=>{
+      const total=eq.cartas.length;
+      const done=eq.cartas.filter(c=>!!state.checked[cardKey('eq',eq.nombre,c.n+c.t)]).length;
+      return `<button class="subnav-btn${i===state.equipoIdx?' active':''}${done===total?' completo':''}" onclick="setEquipo(${i})">
+        <span>${eq.nombre}</span><span class="btn-count">${done}/${total}</span></button>`;
+    }).join('')+'</div>';
+}
+function subnavSeriesHTML(){
+  return '<div class="subnav" id="subnavSe">'+
+    SERIES.map((s,i)=>{
+      const total=s.cartas.length;
+      const done=s.cartas.filter(c=>!!state.checked[cardKey('se',s.nombre,c.n)]).length;
+      return `<button class="subnav-btn${i===state.serieIdx?' active':''}${done===total?' completo':''}" onclick="setSerie(${i})">
+        <span style="font-size:9px">${s.nombre.split(' ')[0]}</span><span class="btn-count">${done}/${total}</span></button>`;
+    }).join('')+'</div>';
+}
+function subnavFueraHTML(){
+  return '<div class="subnav" id="subnavFu">'+
+    FUERA.map((g,i)=>{
+      const total=g.cartas.length;
+      const done=g.cartas.filter((c,j)=>!!state.checked[cardKey('fu',g.g,c.n+j)]).length;
+      const lbl=g.g.split(' ')[0];
+      return `<button class="subnav-btn${i===state.fueraIdx?' active':''}${done===total?' completo':''}" onclick="setFuera(${i})">
+        <span style="font-size:9px">${lbl}</span><span class="btn-count">${done}/${total}</span></button>`;
+    }).join('')+'</div>';
+}
+function secHeaderHTML(titulo,done,total){
+  return `<div class="section-header"><span class="section-title">${titulo}</span><span class="section-count">${done}/${total}</span></div>`;
+}
+
+function render(){
+  if(state.busqueda){renderSearch();return;}
+  const content=document.getElementById('content');let html='';
+  if(state.seccion==='equipos'){
+    html+=subnavEquiposHTML();
+    const eq=EQUIPOS[state.equipoIdx];
+    const done=eq.cartas.filter(c=>!!state.checked[cardKey('eq',eq.nombre,c.n+c.t)]).length;
+    html+=secHeaderHTML(eq.nombre,done,eq.cartas.length);
+    // leyenda BIS
+    const hasBis=eq.cartas.some(c=>c.bis);
+    if(hasBis)html+=`<div class="info-box" style="margin:6px 12px;padding:8px 12px;font-size:11px">🟡 <strong>Naranja = carta BIS</strong> · STD=Stadium Card · Tin Box · Pocket Box · ACT=Actualización Plus · SPO=Sobre Premium Oro</div>`;
+    eq.cartas.forEach(c=>{html+=rowHTML(cardKey('eq',eq.nombre,c.n+c.t),c.n,c.t,c.bis);});
+  }
+  else if(state.seccion==='series'){
+    html+=subnavSeriesHTML();
+    const s=SERIES[state.serieIdx];
+    const done=s.cartas.filter(c=>!!state.checked[cardKey('se',s.nombre,c.n)]).length;
+    html+=secHeaderHTML(s.nombre,done,s.cartas.length);
+    s.cartas.forEach(c=>{html+=rowHTML(cardKey('se',s.nombre,c.n),c.n,c.t,false);});
+  }
+  else if(state.seccion==='entrenadores'){
+    const done=ENTRENADORES.filter(c=>!!state.checked[cardKey('en','ent',c.n)]).length;
+    html+=secHeaderHTML('Entrenadores (Adrenalyn Plus)',done,ENTRENADORES.length);
+    html+=`<div class="info-box">🧢 Los 20 entrenadores se incluyen en la <strong>Actualización Plus</strong> de marzo 2026, no en los sobres regulares.</div>`;
+    ENTRENADORES.forEach(c=>{html+=rowHTML(cardKey('en','ent',c.n),c.n,c.t,false);});
+  }
+  else if(state.seccion==='plus'){
+    const done=PLUS.filter((c,i)=>!!state.checked[cardKey('pl','plus',c.n+i)]).length;
+    html+=secHeaderHTML('Adrenalyn Plus (marzo 2026)',done,PLUS.length);
+    html+=`<div class="info-box">🔵 <strong>92 nuevas cards</strong> en la actualización Plus. Incluye nuevas series especiales, fichajes BIS (numerados en cada equipo) y autógrafos originales.</div>`;
+    PLUS.forEach((c,i)=>{html+=rowHTML(cardKey('pl','plus',c.n+i),c.n,c.t,c.bis);});
+  }
+  else if(state.seccion==='fuera'){
+    html+=subnavFueraHTML();
+    const g=FUERA[state.fueraIdx];
+    const done=g.cartas.filter((c,j)=>!!state.checked[cardKey('fu',g.g,c.n+j)]).length;
+    html+=secHeaderHTML(g.g.split('(')[0].trim(),done,g.cartas.length);
+    html+=`<div class="info-box warn">⚠️ Estas cards están <strong>fuera de colección oficial</strong>. No son necesarias para completarla y no se pueden pedir a Panini como faltas.</div>`;
+    g.cartas.forEach((c,j)=>{html+=rowHTML(cardKey('fu',g.g,c.n+j),c.n,c.t,true);});
+  }
+  content.innerHTML=html;applyFiltro();
+}
+
+function countAll(){
+  let total=0,done=0;
+  EQUIPOS.forEach(eq=>eq.cartas.forEach(c=>{total++;if(state.checked[cardKey('eq',eq.nombre,c.n+c.t)])done++;}));
+  SERIES.forEach(s=>s.cartas.forEach(c=>{total++;if(state.checked[cardKey('se',s.nombre,c.n)])done++;}));
+  ENTRENADORES.forEach(c=>{total++;if(state.checked[cardKey('en','ent',c.n)])done++;});
+  PLUS.forEach((c,i)=>{total++;if(state.checked[cardKey('pl','plus',c.n+i)])done++;});
+  FUERA.forEach(g=>g.cartas.forEach((c,j)=>{total++;if(state.checked[cardKey('fu',g.g,c.n+j)])done++;}));
+  return{total,done};
+}
+function updateProgress(){
+  const{total,done}=countAll();const pct=total?Math.round(done/total*100):0;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressText').textContent=`${done} / ${total} cartas · ${pct}% completado`;
+}
+function updateSectionCount(){
+  const h=document.querySelector('.section-header .section-count');if(!h)return;
+  const rows=document.querySelectorAll('.card-row');
+  h.textContent=`${[...rows].filter(r=>r.classList.contains('checked')).length}/${rows.length}`;
+}
+function updateSubnavCounts(){
+  if(state.seccion==='equipos'){
+    EQUIPOS.forEach((eq,i)=>{
+      const btn=document.querySelector(`#subnavEq .subnav-btn:nth-child(${i+1}) .btn-count`);if(!btn)return;
+      const total=eq.cartas.length;
+      const done=eq.cartas.filter(c=>!!state.checked[cardKey('eq',eq.nombre,c.n+c.t)]).length;
+      btn.textContent=`${done}/${total}`;
+      btn.closest('.subnav-btn').classList.toggle('completo',done===total);
+    });
+  }
+}
+
+document.getElementById('searchInput').addEventListener('input',e=>handleSearch(e.target.value));
+document.getElementById('clearSearch').addEventListener('click',()=>{document.getElementById('searchInput').value='';handleSearch('');});
+
+loadState();render();updateProgress();
+</script>
+</body>
+</html>
